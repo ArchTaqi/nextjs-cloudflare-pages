@@ -1,0 +1,7 @@
+name="nextjs-cloudflare"
+
+[[d1_databases]]
+binding = "DB" # i.e. available in your Worker on env.DB
+database_name = "next_cloudflare_db"
+database_id = "94cbc220-484e-4bfc-a81f-1317cab3e153"
+preview_database_id = "DB"

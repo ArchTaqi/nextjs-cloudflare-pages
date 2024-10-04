@@ -1,36 +1,55 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Next.js (App Router) on Cloudflare Pages
 
-## Getting Started
-
-First, run the development server:
+```
+pnpm create next-app
+pnpm run dev
+pnpm add @cloudflare/next-on-pages
+pnpm add @cloudflare/workers-types
+pnpm add wrangler
+touch wrangler.toml
+```
+add below content to `wrangler.toml`
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+name="nextjs-cloudflare"
+compatibility_flas = ["nodejs_compat"]
+```
+then 
+
+```bash
+pnpm run dev
+pnpm run build
+pnpm exec next-on-pages
+pnpm exec wrangler pages deploy .vercel/output/static
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+> You must manually add the `nodejs_compat` compatibility flag from yhe Cloudflare Dashboard (Workers & Pages > [your app] > Settings > Functions > Compatibility flags) and deploy your app again.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Add Database
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+pnpm exec wrangler d1 create next_cloudflare_db
+pnpm exec wrangler d1 execute next_cloudflare_db --file init.sql --local
+pnpm exec wrangler d1 execute next_cloudflare_db --file init.sql --remote
+```
 
-## Learn More
+> After you first deploy the app, you must manually bind the D1 database from the Cloudflare Dashboard (Workers & Pages > [your app] > Settings > Functions > D1 Database).
 
-To learn more about Next.js, take a look at the following resources:
+> Development is done via pnpm run dev; the development environment is not the same as the production environment, deploy frequently to detect issues early.
+> next-on-pages is still early stage and might have breaking changes or unexpected behavior.
+> Cloudflare Pages only supports the edge runtime. You must export const runtime = "edge" from all your page.tsx files.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## References
 
-## Deploy on Vercel
+Step-by-step Video (in English + subtitles): <https://www.youtube.com/watch?v=Fcp-Mbvh424>
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Talk (in Italian): <https://www.youtube.com/watch?v=wESngFYjQWA>
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Slides: <https://docs.google.com/presentation/d/1UQnAhO4VKu9hst9BBbbsT9LAz_duuJgOVVVvttYHQvI/edit?usp=sharing>
+
+Documentation: <https://b6f0a2e0.cloudflare-docs-7ou.pages.dev/pages/framework-guides/>
+
+Demo: <https://pollo-4.pages.dev/>
+
+Support Channel: <https://discord.com/invite/cloudflaredev>
